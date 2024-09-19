@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/codepnw/hexagonal/repository"
+	"github.com/codepnw/hexagonal/service"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
@@ -19,8 +20,9 @@ func main() {
 	}
 
 	custRepo := repository.NewCustomerRepositoryDB(db)
+	custService := service.NewCustomerService(custRepo)
 
-	customers, err := custRepo.GetAll()
+	customers, err := custService.GetCustomers()
 	if err != nil {
 		panic(err)
 	}
