@@ -21,8 +21,10 @@ func main() {
 		panic(err)
 	}
 
-	custRepo := repository.NewCustomerRepositoryDB(db)
-	custService := service.NewCustomerService(custRepo)
+	custRepoDB := repository.NewCustomerRepositoryDB(db)
+	_ = custRepoDB
+	custRepoMock := repository.NewCustomerRepositoryMock()
+	custService := service.NewCustomerService(custRepoMock)
 	custHandler := handler.NewCustomerHandler(custService)
 
 	router := mux.NewRouter()
