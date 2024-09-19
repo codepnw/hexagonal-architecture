@@ -1,12 +1,14 @@
 package main
 
 import (
-	"fmt"
+	"net/http"
 	"os"
 
+	"github.com/codepnw/hexagonal/handler"
 	"github.com/codepnw/hexagonal/repository"
 	"github.com/codepnw/hexagonal/service"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
 )
@@ -21,11 +23,12 @@ func main() {
 
 	custRepo := repository.NewCustomerRepositoryDB(db)
 	custService := service.NewCustomerService(custRepo)
+	custHandler := handler.NewCustomerHandler(custService)
 
-	customers, err := custService.GetCustomers()
-	if err != nil {
-		panic(err)
-	}
+	router := mux.NewRouter()
 
-	fmt.Println(customers)
+	router.HandleFunc("/customers", custHandler.GetCustomers).Methods(http.MethodGet)
+	router.HandleFunc("/customers/{id:[0-9]+}", custHandler.GetCustomer).Methods(http.MethodGet)
+
+	http.ListenAndServe(":8000", router)
 }
