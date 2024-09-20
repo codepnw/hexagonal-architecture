@@ -3,8 +3,8 @@ package service
 import (
 	"database/sql"
 	"errors"
-	"log"
 
+	"github.com/codepnw/hexagonal/logs"
 	"github.com/codepnw/hexagonal/repository"
 )
 
@@ -19,7 +19,7 @@ func NewCustomerService(custRepo repository.CustomerRepository) CustomerService 
 func (s customerService) GetCustomers() ([]CustomerResponse, error) {
 	customers, err := s.custRepo.GetAll()
 	if err != nil {
-		log.Println(err)
+		logs.Error(err)
 		return nil, err
 	}
 
@@ -43,7 +43,7 @@ func (s customerService) GetCustomer(id int) (*CustomerResponse, error) {
 			return nil, errors.New("customer not found")
 		}
 
-		log.Println(err)
+		logs.Error(err)
 		return nil, err
 	}
 

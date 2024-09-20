@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/codepnw/hexagonal/handler"
+	"github.com/codepnw/hexagonal/logs"
 	"github.com/codepnw/hexagonal/repository"
 	"github.com/codepnw/hexagonal/service"
 	_ "github.com/go-sql-driver/mysql"
@@ -32,7 +33,8 @@ func main() {
 	router.HandleFunc("/customers/{id:[0-9]+}", custHandler.GetCustomer).Methods(http.MethodGet)
 
 	port := fmt.Sprintf(":%d", viper.GetInt("app.port"))
-	fmt.Println("server starting at", port)
+
+	logs.Info("server starting at " + port)
 	http.ListenAndServe(port, router)
 }
 
