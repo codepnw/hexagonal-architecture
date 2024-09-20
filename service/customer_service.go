@@ -2,8 +2,8 @@ package service
 
 import (
 	"database/sql"
-	"errors"
 
+	"github.com/codepnw/hexagonal/errs"
 	"github.com/codepnw/hexagonal/logs"
 	"github.com/codepnw/hexagonal/repository"
 )
@@ -20,7 +20,7 @@ func (s customerService) GetCustomers() ([]CustomerResponse, error) {
 	customers, err := s.custRepo.GetAll()
 	if err != nil {
 		logs.Error(err)
-		return nil, err
+		return nil, errs.NewErrUnexpected()
 	}
 
 	custResponses := []CustomerResponse{}
@@ -40,11 +40,11 @@ func (s customerService) GetCustomer(id int) (*CustomerResponse, error) {
 	customer, err := s.custRepo.GetById(id)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.New("customer not found")
+			return nil, errs.NewErrNotFound("customer not found")
 		}
 
 		logs.Error(err)
-		return nil, err
+		return nil, errs.NewErrUnexpected()
 	}
 
 	response := CustomerResponse{
