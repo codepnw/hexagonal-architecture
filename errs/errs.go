@@ -24,4 +24,11 @@ func NewErrUnexpected() error {
 		Code:    http.StatusInternalServerError,
 		Message: "unexpected error",
 	}
+} 
+
+func NewErrValidation(message string) error {
+	return AppError{
+		Code: http.StatusUnprocessableEntity,
+		Message: message,
+	}
 }

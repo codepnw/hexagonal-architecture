@@ -22,15 +22,21 @@ func main() {
 	db := initDatabase()
 
 	custRepoDB := repository.NewCustomerRepositoryDB(db)
-	custRepoMock := repository.NewCustomerRepositoryMock()
-	_ = custRepoMock
+	// custRepoMock := repository.NewCustomerRepositoryMock()
 	custService := service.NewCustomerService(custRepoDB)
 	custHandler := handler.NewCustomerHandler(custService)
+
+	accRepoDB := repository.NewAccountRepository(db)
+	accService := service.NewAccountService(accRepoDB)
+	accHandler := handler.NewAccountHandler(accService)
 
 	router := mux.NewRouter()
 
 	router.HandleFunc("/customers", custHandler.GetCustomers).Methods(http.MethodGet)
 	router.HandleFunc("/customers/{id:[0-9]+}", custHandler.GetCustomer).Methods(http.MethodGet)
+
+	router.HandleFunc("/customers/{customerID:[0-9]+}/accounts", accHandler.GetAccounts).Methods(http.MethodGet)
+	router.HandleFunc("/customers/{customerID:[0-9]+}/accounts", accHandler.NewAccount).Methods(http.MethodPost)
 
 	port := fmt.Sprintf(":%d", viper.GetInt("app.port"))
 

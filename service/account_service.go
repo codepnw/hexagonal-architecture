@@ -1,6 +1,7 @@
 package service
 
 import (
+	"strings"
 	"time"
 
 	"github.com/codepnw/hexagonal/errs"
@@ -17,6 +18,15 @@ func NewAccountService(accRepo repository.AccountRepository) AccountService {
 }
 
 func (s accountService) NewAccount(customerID int, request NewAccountRequest) (*AccountResponse, error) {
+	// Validate
+	if request.Amount < 1000 {
+		return nil, errs.NewErrValidation("amount at least 1,000")
+	}
+
+	if strings.ToLower(request.AccountType) != "saving" && strings.ToLower(request.AccountType) != "checking" {
+		return nil, errs.NewErrValidation("account type should be saving or checking")
+	}
+
 	account := repository.Account{
 		CustomerID:  customerID,
 		OpeningDate: time.Now().Format("2006-01-02 15:04:05"),
